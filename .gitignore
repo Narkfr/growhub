@@ -1,0 +1,44 @@
+# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+
+# Front
+
+# dependencies
+front/node_modules/
+
+# Expo
+front/.expo/
+front/dist/
+front/web-build/
+front/expo-env.d.ts
+
+# Native
+front/*.orig.*
+front/*.jks
+front/*.p8
+front/*.p12
+front/*.key
+front/*.mobileprovision
+
+# Metro
+front/.metro-health-check*
+
+# debug
+front/npm-debug.*
+front/yarn-debug.*
+front/yarn-error.*
+
+# local env files
+front/.env*.local
+
+# typescript
+front/*.tsbuildinfo
+
+front/app-example
+
+# Back
+
+# Common 
+
+# macOS
+.DS_Store
+*.pem
