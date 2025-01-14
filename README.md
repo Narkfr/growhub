@@ -5,6 +5,12 @@ This document outlines the technical stack and architecture for the project, whi
 
 ---
 
+## Table of Contents
+
+- [Expo App Initialization](front/README.md)
+
+---
+
 ## 1. Frontend
 **Technology:** React Native
 
