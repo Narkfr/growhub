@@ -38,6 +38,7 @@ front/app-example
 # Back
 
 # Common 
+__pycache__/
 
 # macOS
 .DS_Store
