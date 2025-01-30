@@ -1,0 +1,2 @@
+INDEX = "/"
+CHICKEN = "/chicken"
