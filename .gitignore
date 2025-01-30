@@ -39,6 +39,7 @@ front/app-example
 
 # Common 
 __pycache__/
+TODO.md
 
 # macOS
 .DS_Store
