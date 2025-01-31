@@ -1,5 +1,18 @@
 <!doctype html>
-<title>Chicken - Growhub</title>
+<head>
+    <title>Chicken - Growhub</title>
+    <script>
+        function sendMQTTMessage(topic, message) {
+            fetch('/mqtt', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ topic, message })
+            })
+            .then(response => response.json())
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</head>
 <h1>Chicken</h1>
 <ul>
     <li><a href="{{ routes.INDEX }}">Index</a></li>
@@ -7,6 +20,6 @@
 </ul>
 <h2>Door Status {{ door_status }}</h2>
 <ul>
-    <li><button>Open</button></li>
-    <li><button>Close</button></li>
+    <li><button onclick="sendMQTTMessage('chicken/door', 'open')">Open</button></li>
+    <li><button onclick="sendMQTTMessage('chicken/door', 'close')">Close</button></li>
 </ul>
