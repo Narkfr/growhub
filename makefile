@@ -1,6 +1,9 @@
 dashboard:
 	./dashboard.sh
 
+check_services:
+	./check_services.sh
+
 run_backend:
 	cd back/app && python3 app.py -p 0.0.0.0 --debug
 
