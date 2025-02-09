@@ -1,10 +1,9 @@
+from datetime import datetime
 from flask import Flask, render_template, request, jsonify
 from config import routes, env
 import paho.mqtt.client as mqtt
 import redis
-import sys
 from celery import Celery
-from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
@@ -114,6 +113,7 @@ def schedule_mqtt_datetime():
     topic = data.get("topic")
     message = data.get("message")
     scheduled_time = data.get("datetime")  # Format: 'YYYY-MM-DD HH:MM:SS'
+    print(f"🕒 Scheduling message: {message} to topic: {topic} at {scheduled_time}")
 
     try:
         execution_time = datetime.strptime(scheduled_time, "%Y-%m-%d %H:%M:%S")
