@@ -10,14 +10,17 @@ function scheduleMqttTask(topic, message) {
 }
 
 function scheduleMqttTaskAtTime(topic, message) {
-    const datetimeInput = document.getElementById('mqttScheduleTime').value;
+    const datetime = new Date(document.getElementById('mqttScheduleTime').value)
+        .toISOString()
+        .slice(0, 19)
+        .replace("T", " "); // "2025-02-09 21:30:00"
     fetch('/schedule/mqtt/datetime', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic: topic, message: message, datetime: datetimeInput })
+        body: JSON.stringify({ topic: topic, message: message + datetime, datetime: datetime })
     }).then(response => response.json()).then(data => {
         console.log(data);
-        alert("MQTT message scheduled at " + datetimeInput);
+        alert("MQTT message scheduled at " + datetime);
     });
 }
 
