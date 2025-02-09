@@ -2,8 +2,17 @@ from flask import Flask, render_template, request, jsonify
 from config import routes, env
 import paho.mqtt.client as mqtt
 import redis
+import sys
+from celery import Celery
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
+
+# Celery Configuration
+app.config['CELERY_BROKER_URL'] = f'redis://{env.REDIS_HOST}:{env.REDIS_PORT}/0'
+app.config['CELERY_RESULT_BACKEND'] = f'redis://{env.REDIS_HOST}:{env.REDIS_PORT}/0'
+celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+celery.conf.update(app.config)
 
 # MQTT Configuration
 MQTT_BROKER = env.MQTT_BROKER  # Changez si le broker est sur une autre machine
@@ -35,6 +44,18 @@ def connect_redis():
         print("❌ Failed to connect to Redis.")
         exit(1)
 
+# Celery Task to publish to MQTT
+@celery.task
+def mqtt_publish(topic, message):
+    print(f"📢 Publishing to topic: {topic}, message: {message}")
+
+    local_client = mqtt.Client()
+    local_client.connect(env.MQTT_BROKER, env.MQTT_PORT)
+    local_client.publish(f'{env.MQTT_TOPIC}/{topic}', message)
+    local_client.disconnect()
+
+    print("✅ Message sent via new MQTT client")
+
 @app.route(routes.INDEX)
 def index():
     return render_template('index.html', routes=routes)
@@ -51,7 +72,7 @@ def mqtt_post():
         data = request.json
         topic = data.get("topic")
         message = data.get("message")
-        print(f"Publishing to topic: {topic}, message: {message}")
+        print(f"📢 Publishing to topic: {topic}, message: {message}")
 
         # Publish to MQTT topic
         client.publish(f'{env.MQTT_TOPIC}/{topic}', message)
@@ -73,6 +94,43 @@ def redis_post():
         return jsonify({"key": key, "value": value})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.route('/schedule/mqtt', methods=['POST'])
+def schedule_mqtt():
+    """ Schedule a MQTT message """
+    data = request.json
+    topic = data.get("topic")
+    message = data.get("message")
+    delay = data.get("delay", 120)  # Default delay: 2 minutes
+    print(f"🕒 Scheduling message: {message} to topic: {topic} in {delay} seconds")
+
+    mqtt_publish.apply_async(args=[topic, message], countdown=delay)
+    return jsonify({"status": "scheduled", "topic": topic, "message": message, "delay": delay})
+
+@app.route('/schedule/mqtt/datetime', methods=['POST'])
+def schedule_mqtt_datetime():
+    """ Schedule a MQTT message at a specific date/time """
+    data = request.json
+    topic = data.get("topic")
+    message = data.get("message")
+    scheduled_time = data.get("datetime")  # Format: 'YYYY-MM-DD HH:MM:SS'
+
+    try:
+        execution_time = datetime.strptime(scheduled_time, "%Y-%m-%d %H:%M:%S")
+        delay = (execution_time - datetime.now()).total_seconds()
+        if delay < 0:
+            return jsonify({"error": "Scheduled time is in the past"}), 400
+
+        mqtt_publish.apply_async(args=[topic, message], countdown=delay)
+        return jsonify({
+            "status": "scheduled", 
+            "topic": topic, 
+            "message": message, 
+            "datetime": scheduled_time
+        })
+    except ValueError:
+        return jsonify({"error": "Invalid datetime format"}), 400
+
 
 if __name__ == '__main__':
     connect_mqtt()
