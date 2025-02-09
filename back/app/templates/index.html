@@ -1,7 +1,10 @@
-<!doctype html>
-<title>GrowHub</title>
-<h1>Index</h1>
-<ul>
-    <li><a href="{{ routes.INDEX }}">Index</a></li>
-    <li><a href="{{ routes.CHICKEN }}">Chicken</a></li>
-</ul>
+{% extends "base.html" %}
+
+{% block title %}Index - Growhub{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Index</h2>
+    <button onclick="sendRedisTask('growhub', 'prout')">Test Redis</button>
+</div>
+{% endblock %}
