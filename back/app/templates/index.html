@@ -7,4 +7,16 @@
     <h2>Index</h2>
     <button onclick="sendRedisTask('growhub', 'prout')">Test Redis</button>
 </div>
+<div class="card">
+    <button onclick="scheduleMqttTask('scheduled', 'Scheduled message')">
+        Schedule MQTT in 2 minutes
+    </button>
+    <br><br>
+
+    <input type="datetime-local" id="mqttScheduleTime">
+    <button onclick="scheduleMqttTaskAtTime('scheduled', 'Scheduled at specific time')">
+        Schedule MQTT at a specific time
+    </button>
+</div>
+
 {% endblock %}
