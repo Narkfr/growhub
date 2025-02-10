@@ -93,6 +93,22 @@ def redis_post():
         return jsonify({"key": key, "value": value})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+@app.route('/schedule_tasks', methods=['POST'])
+def schedule_tasks():
+    data = request.json
+    tasks = data.get("tasks")
+    print(f"🕒 Received {len(tasks)} tasks")
+
+    for task in tasks:
+        topic = task.get("topic")
+        message = task.get("message")
+        delay = task.get("delay")
+        print(f"🕒 Scheduling message: {message} to topic: {topic} in {delay} seconds")
+
+        mqtt_publish.apply_async(args=[topic, message], countdown=delay)
+    
+    return jsonify({"status": "scheduled", "tasks": len(tasks)})
 
 @app.route('/schedule/mqtt', methods=['POST'])
 def schedule_mqtt():

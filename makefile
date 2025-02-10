@@ -15,3 +15,6 @@ restart_mosquitto:
 
 listen_mosquitto:
 	mosquitto_sub -t '#' -v
+
+start_celery:
+	cd back/app && celery -A app.celery worker --loglevel=info
