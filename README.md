@@ -8,7 +8,7 @@ This document outlines the technical stack and architecture for the project, whi
 ## Table of Contents
 
 - [Expo App Initialization](front/README.md)
-- [Workflow for scheduled tasks](docs/workflow_scheduled_tasks.md)
+- [Automated Task Scheduling with Cron, Redis, and Celery](docs/automated_task_scheduling.md)
 
 ---
 
