@@ -9,6 +9,7 @@ This document outlines the technical stack and architecture for the project, whi
 
 - [Expo App Initialization](front/README.md)
 - [Automated Task Scheduling with Cron, Redis, and Celery](docs/automated_task_scheduling.md)
+- [Chicken Coop Automation](docs/chicken_coop_automation.md)
 
 ---
 
