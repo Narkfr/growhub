@@ -15,3 +15,9 @@ listen_mosquitto:
 
 start_celery:
 	cd back/app && celery -A app.celery worker --loglevel=info
+
+start_flower:
+	cd back/app && celery -A app.celery flower
+
+flush_redis:
+	redis-cli flushall

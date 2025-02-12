@@ -16,7 +16,9 @@ configobj==5.0.9
 dill==0.3.9
 Flask==3.1.0
 Flask-Session==0.8.0
+flower==2.0.1
 h3==4.2.1
+humanize==4.11.0
 idna==3.10
 iredis==1.15.0
 isort==6.0.0
@@ -31,6 +33,7 @@ numpy==2.2.2
 packaging==23.2
 paho-mqtt==2.1.0
 platformdirs==4.3.6
+prometheus_client==0.21.1
 prompt_toolkit==3.0.48
 pycparser==2.22
 Pygments==2.19.1
@@ -42,6 +45,7 @@ requests==2.32.3
 six==1.17.0
 timezonefinder==6.5.8
 tomlkit==0.13.2
+tornado==6.4.2
 tzdata==2024.2
 urllib3==2.3.0
 vine==5.1.0
