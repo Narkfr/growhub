@@ -37,6 +37,7 @@ def load_and_execute_tasks():
                 print(f"❌ Error loading {device_path.name}/tasks.py: {e}")
     
     if all_tasks:
+        # TODO: loop to post each task instead of all_tasks
         try:
             response = requests.post(FLASK_API_URL, json={"tasks": all_tasks})
             if response.status_code == 200:

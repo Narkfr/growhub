@@ -44,10 +44,11 @@ def connect_redis():
         exit(1)
 
 # Celery Task to publish to MQTT
+# TODO: Refact mqtt_publish
 @celery.task
 def mqtt_publish(topic, message):
     print(f"📢 Publishing to topic: {topic}, message: {message}")
-
+    # TODO: Refact with same client ?
     local_client = mqtt.Client()
     local_client.connect(env.MQTT_BROKER, env.MQTT_PORT)
     local_client.publish(f'{env.MQTT_TOPIC}/{topic}', message)
@@ -63,6 +64,7 @@ def index():
 def chicken():
     return render_template('chicken.html', routes=routes, door_status="open")
 
+# TODO: Refact mqtt_publish
 @app.route(routes.MQTT, methods=['POST'])
 def mqtt_post():
     try:
@@ -94,6 +96,7 @@ def redis_post():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
+# TODO: Refact mqtt_publish
 @app.route('/schedule_tasks', methods=['POST'])
 def schedule_tasks():
     data = request.json
@@ -110,6 +113,7 @@ def schedule_tasks():
     
     return jsonify({"status": "scheduled", "tasks": len(tasks)})
 
+# TODO: Refact mqtt_publish
 @app.route('/schedule/mqtt', methods=['POST'])
 def schedule_mqtt():
     """ Schedule a MQTT message """
@@ -122,6 +126,7 @@ def schedule_mqtt():
     mqtt_publish.apply_async(args=[topic, message], countdown=delay)
     return jsonify({"status": "scheduled", "topic": topic, "message": message, "delay": delay})
 
+# TODO: Refact mqtt_publish
 @app.route('/schedule/mqtt/datetime', methods=['POST'])
 def schedule_mqtt_datetime():
     """ Schedule a MQTT message at a specific date/time """

@@ -14,7 +14,7 @@ def register_tasks():
     using the correct timezone for the given coordinates."""
 
     # Get the current date
-    today = (datetime.now() + timedelta(days=1)).date()
+    today = datetime.now().date()
     
     # Get the timezone based on latitude and longitude
     tf = TimezoneFinder()
