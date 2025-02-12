@@ -63,24 +63,21 @@ main {
 }
 
 /* Boutons */
+
 button {
-    background-color: #4CAF50; /* Vert moderne */
+    margin-top: 15px;
+    padding: 10px;
+    font-size: 16px;
     color: white;
+    background: #007BFF;
     border: none;
-    padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: background 0.3s;
 }
 
 button:hover {
-    background-color: #45a049; /* Vert plus foncé au survol */
-    transform: translateY(-2px); /* Effet de levée */
-}
-
-button:active {
-    transform: translateY(0); /* Retour à la position initiale */
+    background: #0056b3;
 }
 
 /* Section Chicken */
@@ -109,11 +106,36 @@ button:active {
     display: inline-block;
 }
 
-/* Effet de carte pour les sections */
+.column {
+    display: flex; /* Arrange elements in a row */
+    justify-content: center; /* Center the cards */
+    gap: 20px; /* Space between the cards */
+    flex-wrap: wrap; /* Wrap if screen is too small */
+}
+
 .card {
-    background-color: white;
+    max-width: 400px;
+    margin: 20px auto;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    background: #f9f9f9;
+}
+
+/* Form styling */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-weight: bold;
+    margin: 10px 0 5px;
+}
+
+input {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
