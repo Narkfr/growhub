@@ -1,48 +1,37 @@
-function scheduleMqttTaskAtDelay(event) {
+function scheduleMqttTask(event) {
     event.preventDefault(); // Prevent page reload
 
-    // Get form data
+    // Retrieve form data
     const formData = new FormData(event.target);
     const topic = formData.get("topic");
     const message = formData.get("message");
-    const delay = parseInt(formData.get("delay"), 10); // Convert to integer
-    fetch('/schedule/mqtt', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic: topic, message: message, delay: delay })
-    }).then(response => response.json()).then(data => {
-        console.log(data);
-        alert(`MQTT message scheduled in ${delay} seconds!`);
-    });
-}
+    const delay = formData.get("delay") ? parseInt(formData.get("delay"), 10) : null;
+    const datetimeRaw = formData.get("datetime");
+    const datetime = datetimeRaw
+        ? new Date(datetimeRaw).toISOString().slice(0, 19).replace("T", " ")
+        : null;
 
-function scheduleMqttTaskAtTime(event) {
-    event.preventDefault();
-    console.log(event);
-    // Get form data
-    const formData = new FormData(event.target);
-    const topic = formData.get("topic");
-    const message = formData.get("message");
-    const datetime = new Date(formData.get("datetime"))
-        .toISOString()
-        .slice(0, 19)
-        .replace("T", " "); // Format: "YYYY-MM-DD HH:MM:SS"
-    fetch('/schedule/mqtt/datetime', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic: topic, message: message + datetime, datetime: datetime })
-    }).then(response => response.json()).then(data => {
-        console.log(data);
-        alert(`MQTT message scheduled at ${datetime}`);
-    });
-}
+    // Build request payload
+    const requestBody = {
+        topic,
+        message,
+        ...(delay && { delay }),
+        ...(datetime && { datetime })
+    };
 
-function sendMQTTMessage(topic, message) {
+    // Send request to the backend
     fetch('/mqtt', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic, message })
+        body: JSON.stringify(requestBody)
     })
     .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        const alertMessage = datetime
+            ? `MQTT message scheduled at ${datetime}!`
+            : `MQTT message scheduled in ${delay} seconds!`;
+        alert(alertMessage);
+    })
     .catch(error => console.error('Error:', error));
 }

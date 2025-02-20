@@ -7,7 +7,7 @@
     <div class="card">
         <!-- Form for scheduling an MQTT message after a delay -->
         <h3>Schedule an MQTT Message with a Delay</h3>
-        <form id="scheduleForm" onsubmit="scheduleMqttTaskAtDelay(event)">
+        <form id="scheduleForm" onsubmit="scheduleMqttTask(event)">
             <label for="topic">MQTT Topic:</label>
             <input type="text" name="topic" required placeholder="e.g., home/sensor">
             
@@ -24,7 +24,7 @@
     <div class="card">
         <!-- Form for scheduling an MQTT message at a specific time -->
         <h3>Schedule an MQTT Message at a Specific Time</h3>
-        <form id="scheduleTimeForm" onsubmit="scheduleMqttTaskAtTime(event)">
+        <form id="scheduleTimeForm" onsubmit="scheduleMqttTask(event)">
             <label for="topic">MQTT Topic:</label>
             <input type="text" name="topic" required placeholder="e.g., home/sensor">
             

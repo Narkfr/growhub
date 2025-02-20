@@ -7,8 +7,20 @@
     <h2>Chicken</h2>
     <h3>Door Status: <span>{{ door_status }}</span></h3>
     <ul>
-        <li><button onclick="sendMQTTMessage('chicken/door', 'open')">Open</button></li>
-        <li><button onclick="sendMQTTMessage('chicken/door', 'close')">Close</button></li>
+        <li>
+            <form  onsubmit="scheduleMqttTask(event)">
+                <input type="hidden" name="topic" value="chicken/door">
+                <input type="hidden" name="message" value="open">
+                <button type="submit">Open</button>
+            </form>
+        </li>
+        <li>
+            <form  onsubmit="scheduleMqttTask(event)">
+                <input type="hidden" name="topic" value="chicken/door">
+                <input type="hidden" name="message" value="close">
+                <button type="submit">Close</button>
+            </form>
+        </li>
     </ul>
 </div>
 {% endblock %}
