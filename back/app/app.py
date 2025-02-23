@@ -1,10 +1,11 @@
+import threading
 from datetime import datetime
 
 import paho.mqtt.client as mqtt
 import redis
 from celery import Celery
 from config import env, routes
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, render_template, request
 
 app = Flask(__name__)
 
@@ -97,8 +98,14 @@ def mqtt_post():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route(routes.INDEX)
+def index():
+    return render_template('index.html', routes=routes)
+
+@app.route(routes.CHICKEN)
+def chicken():
+    return render_template('chicken.html', routes=routes, door_status="open")
 
 if __name__ == "__main__":
-    connect_mqtt()
     connect_redis()
     app.run(debug=True, host="0.0.0.0")

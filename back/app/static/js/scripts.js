@@ -30,7 +30,7 @@ function scheduleMqttTask(event) {
         console.log(data);
         const alertMessage = datetime
             ? `MQTT message scheduled at ${datetime}!`
-            : `MQTT message scheduled in ${delay} seconds!`;
+            : `MQTT message scheduled in ${delay === null ? "0" : delay} seconds!`;
         alert(alertMessage);
     })
     .catch(error => console.error('Error:', error));
