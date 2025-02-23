@@ -15,51 +15,39 @@ app.config["CELERY_RESULT_BACKEND"] = f"redis://{env.REDIS_HOST}:{env.REDIS_PORT
 celery = Celery(app.name, broker=app.config["CELERY_BROKER_URL"])
 celery.conf.update(app.config)
 
+@celery.task
+def mqtt_publish(topic, message):
+    print(f"📢 Publishing to topic: {topic}, message: {message}")
+    mqtt_client.publish(f"{env.MQTT_TOPIC}/{topic}", message)
+    print("✅ Message sent")
+
 # MQTT Configuration
 MQTT_BROKER = env.MQTT_BROKER
 MQTT_PORT = env.MQTT_PORT
 MQTT_TOPIC = env.MQTT_TOPIC
 
-client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1)
+mqtt_client = mqtt.Client()
 
-# Redis Configuration
-REDIS_HOST = env.REDIS_HOST
-REDIS_PORT = env.REDIS_PORT
-redisServer = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, decode_responses=True)
+def on_connect(client, userdata, flags, rc):
+    print("✅ MQTT client connected")
+    client.subscribe(MQTT_TOPIC)
 
+def on_message(client, userdata, msg):
+    print(f"Message receivef on {msg.topic}: {msg.payload.decode()}")
 
-def connect_mqtt():
-    try:
-        client.connect(MQTT_BROKER, MQTT_PORT)
-        client.loop_start()
-        print("✅ MQTT client connected")
-    except (mqtt.MQTTException, ConnectionRefusedError) as e:
-        print(f"❌ Error connecting to MQTT broker: {e}")
+mqtt_client.on_connect = on_connect
+mqtt_client.on_message = on_message
 
+mqtt_client.connect(MQTT_BROKER, MQTT_PORT, 60)
 
-def connect_redis():
-    try:
-        redisServer.ping()
-        print("✅ Connected to Redis successfully!")
-    except redis.ConnectionError:
-        print("❌ Failed to connect to Redis.")
-        exit(1)
-
-
-@celery.task
-def mqtt_publish(topic, message):
-    print(f"📢 Publishing to topic: {topic}, message: {message}")
-    local_client = mqtt.Client()
-    local_client.connect(env.MQTT_BROKER, env.MQTT_PORT)
-    local_client.publish(f"{env.MQTT_TOPIC}/{topic}", message)
-    local_client.disconnect()
-    print("✅ Message sent via new MQTT client")
-
+mqtt_thread = threading.Thread(target=mqtt_client.loop_forever)
+mqtt_thread.daemon = True
+mqtt_thread.start()
 
 def schedule_mqtt(topic, message, delay=0, scheduled_time=None):
     if scheduled_time:
         try:
-            execution_time = datetime.strptime(scheduled_time, "%Y-%m-%d %H:%M:%S")
+            execution_time = datetime.strptime(scheduled_time,"%Y-%m-%d %H:%M:%S")
             delay = (execution_time - datetime.now()).total_seconds()
             if delay < 0:
                 return {"error": "Scheduled time is in the past"}, 400
@@ -80,11 +68,24 @@ def schedule_mqtt(topic, message, delay=0, scheduled_time=None):
         "scheduled_time": scheduled_time,
     }
 
+# Redis Configuration
+REDIS_HOST = env.REDIS_HOST
+REDIS_PORT = env.REDIS_PORT
+redisServer = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, decode_responses=True)
 
+def connect_redis():
+    try:
+        redisServer.ping()
+        print("✅ Connected to Redis successfully!")
+    except redis.ConnectionError:
+        print("❌ Failed to connect to Redis.")
+        exit(1)
+
+# Routes
 @app.route(routes.MQTT, methods=["POST"])
 def mqtt_post():
     try:
-        if not client.is_connected():
+        if not mqtt_client.is_connected():
             return jsonify({"error": "MQTT client is not connected"}), 500
         data = request.json
         return jsonify(
