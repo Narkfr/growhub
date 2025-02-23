@@ -122,7 +122,6 @@ def tasks():
                 "eta": format_date(task.get("eta")),
                 "status": "Scheduled"
             })
-            print(task)
     return render_template("tasks.html", tasks=tasks)
 
 def format_date(iso_date):
@@ -130,7 +129,7 @@ def format_date(iso_date):
     if iso_date and isinstance(iso_date, str):
         try:
             dt = datetime.fromisoformat(iso_date.rstrip("Z"))  # Remove 'Z' if present
-            dt = dt.replace(tzinfo=pytz.utc).astimezone(pytz.timezone("Europe/London"))  # Convert to local time
+            dt = dt.replace(tzinfo=pytz.utc).astimezone(pytz.timezone("Europe/Paris"))  # Convert to local time
             return dt.strftime("%d %B %Y at %H:%M")  # Example: 23 February 2025 at 19:06
         except ValueError:
             return "Invalid date"
