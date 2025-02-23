@@ -37,7 +37,10 @@ front/app-example
 
 # Back
 
-# Common 
+# Devices
+devices/device_test
+
+# Common
 __pycache__/
 TODO.md
 env/
