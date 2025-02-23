@@ -38,7 +38,6 @@ front/app-example
 # Back
 
 # Devices
-devices/device_test
 
 # Common
 __pycache__/
