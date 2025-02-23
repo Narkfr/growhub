@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Tasks - Growhub{% endblock %}
+
+{% block content %}
+<div class="card task-section">
+    <h1>Task</h1>
+    <table>
+        <tr>
+            <th>Topic</th>
+            <th>Message</th>
+            <th>Statut</th>
+            <th>Échéance</th>
+        </tr>
+        {% for task in tasks %}
+        <tr>
+            <td>{{ task.topic }}</td>
+            <td>{{ task.message }}</td>
+            <td class="status-{{ task.status|lower }}">{{ task.status }}</td>
+            <td>{{ task.eta }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

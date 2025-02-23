@@ -2,6 +2,7 @@ import threading
 from datetime import datetime
 
 import paho.mqtt.client as mqtt
+import pytz
 import redis
 from celery import Celery
 from config import env, routes
@@ -106,6 +107,34 @@ def index():
 @app.route(routes.CHICKEN)
 def chicken():
     return render_template('chicken.html', routes=routes, door_status="open")
+
+@app.route(routes.TASKS)
+def tasks():
+    inspector = celery.control.inspect()
+    scheduled = inspector.scheduled() or {}
+    tasks = []
+
+    for worker, task_list in scheduled.items():
+        for task in task_list:
+            tasks.append({
+                "topic": task["request"]["args"][0],
+                "message": task["request"]["args"][1],
+                "eta": format_date(task.get("eta")),
+                "status": "Scheduled"
+            })
+            print(task)
+    return render_template("tasks.html", tasks=tasks)
+
+def format_date(iso_date):
+    """Converts an ISO 8601 date to a human-readable format in English (24-hour format)"""
+    if iso_date and isinstance(iso_date, str):
+        try:
+            dt = datetime.fromisoformat(iso_date.rstrip("Z"))  # Remove 'Z' if present
+            dt = dt.replace(tzinfo=pytz.utc).astimezone(pytz.timezone("Europe/London"))  # Convert to local time
+            return dt.strftime("%d %B %Y at %H:%M")  # Example: 23 February 2025 at 19:06
+        except ValueError:
+            return "Invalid date"
+    return "No specific date"
 
 if __name__ == "__main__":
     connect_redis()
