@@ -15,6 +15,9 @@ app.config["CELERY_BROKER_URL"] = f"redis://{env.REDIS_HOST}:{env.REDIS_PORT}/0"
 app.config["CELERY_RESULT_BACKEND"] = f"redis://{env.REDIS_HOST}:{env.REDIS_PORT}/0"
 celery = Celery(app.name, broker=app.config["CELERY_BROKER_URL"])
 celery.conf.update(app.config)
+celery.conf.task_acks_late = True
+celery.conf.broker_transport_options = {"visibility_timeout": 86400} # 24 hours
+
 
 @celery.task
 def mqtt_publish(topic, message):
